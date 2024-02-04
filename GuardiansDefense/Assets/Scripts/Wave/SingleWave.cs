@@ -1,69 +1,122 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GuardianDefence.Wave
+using GuardiansDefense.Enemy;
+
+namespace GuardiansDefense.Wave
 {
   public class SingleWave : MonoBehaviour
   {
-    /*[Header("СПАВН")]
-    [SerializeField, Tooltip("Индекс точки спавна")]
-    private int _indexSpawnPoint;*/
+    [SerializeField] private List<WaveSettings> _listWaveSettings;
 
-    [Header("ВРАГИ")]
-    [SerializeField, Tooltip("Список врагов")]
-    private List<SpawnEnemy> _listEnemies;
+    //--------------------------------------
 
-    //======================================
+    private bool isWaveActive = true;
 
+    private float timerDelaySpawn;
 
+    private int currentWaveSettingIndex = 0;
 
-    //======================================
+    private int agentsSpawned = 0;
 
-
+    private Waypoints waypoints;
 
     //======================================
 
-    public IEnumerator SpawnEnemies()
+    public event Action OnSingleWaveBegun;
+
+    public event Action OnSingleWaveOver;
+
+    //======================================
+
+    private void Start()
     {
-      for (int i = 0; i < _listEnemies.Count; i++)
-      {
-        for (int j = 0; j < _listEnemies[i].numberEnemies; j++)
-        {
-          Debug.Log($"{_listEnemies[i].indexSpawnPoint} - {j}");
-          yield return new WaitForSeconds(_listEnemies[i].delaySpawn);
-        }
+      waypoints = Waypoints.Instance;
+    }
 
-        yield return new WaitForSeconds(_listEnemies[i].delayBetween);
+    private void Update()
+    {
+      TimerSpawnAgent();
+    }
+
+    //======================================
+
+    private void TimerSpawnAgent()
+    {
+      if (!isWaveActive)
+        return;
+
+      timerDelaySpawn += Time.deltaTime;
+      WaveSettings waveSetting = _listWaveSettings[currentWaveSettingIndex];
+      if (timerDelaySpawn >= waveSetting.DelaySpawn)
+      {
+        timerDelaySpawn = 0;
+
+        SpawnAgent(waveSetting);
+      }
+    }        
+
+    private void SpawnAgent(WaveSettings parWaveSetting)
+    {
+      if (agentsSpawned < parWaveSetting.NumberAgents)
+      {
+        CreateAgent(parWaveSetting);
+        return;
+      }
+
+      FollowingEnemies();
+    }
+
+    private void FollowingEnemies()
+    {
+      if (currentWaveSettingIndex + 1 > _listWaveSettings.Count - 1)
+        return;
+
+      currentWaveSettingIndex++;
+      agentsSpawned = 0;
+      timerDelaySpawn = 0;
+    }
+
+    private void CreateAgent(WaveSettings parWaveSetting)
+    {
+      var wave = _listWaveSettings[currentWaveSettingIndex];
+
+      Vector3 direction = waypoints.GetPointPosition(wave.PathIndex, 1) - waypoints.GetPointPosition(wave.PathIndex, 0);
+      direction.y = 0;
+
+      EnemyAgent agent = Instantiate(parWaveSetting.Agent, waypoints.GetPointPosition(wave.PathIndex, 0), Quaternion.LookRotation(direction));
+      agent.InitWaypoints(waypoints.GetWaypoints(wave.PathIndex));
+
+      agentsSpawned++;
+
+      EnemiesOver(parWaveSetting);
+    }
+
+    private void EnemiesOver(WaveSettings parWaveSetting)
+    {
+      if (currentWaveSettingIndex + 1 <= _listWaveSettings.Count - 1)
+        return;
+
+      if (agentsSpawned >= parWaveSetting.NumberAgents)
+      {
+        isWaveActive = false;
+        OnSingleWaveOver?.Invoke();
+        enabled = false;
       }
     }
 
     //======================================
 
-    [System.Serializable]
-    public class SpawnEnemy
+    public int GetNumberAgents()
     {
-      public Enemy enemy;
+      int count = 0;
+      for (int i = 0; i < _listWaveSettings.Count; i++)
+      {
+        count += _listWaveSettings[i].NumberAgents;
+      }
 
-      /// <summary>
-      /// Индекс точки спавна
-      /// </summary>
-      public int indexSpawnPoint;
-
-      /// <summary>
-      /// Количество врагов
-      /// </summary>
-      public int numberEnemies;
-
-      /// <summary>
-      /// Задержка спавна врагов
-      /// </summary>
-      public float delaySpawn;
-
-      /// <summary>
-      /// Задержка между появлением следующих врагов
-      /// </summary>
-      public float delayBetween;
+      return count;
     }
 
     //======================================

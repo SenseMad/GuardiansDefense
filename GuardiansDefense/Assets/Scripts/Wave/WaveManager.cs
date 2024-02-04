@@ -1,43 +1,113 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-namespace GuardianDefence.Wave
-{
-  public class WaveManager : MonoBehaviour
-  {
-    [SerializeField, Tooltip("Список волн")]
-    private List<Wave> _listWaves;
+using GuardiansDefense.Level;
 
-    [SerializeField, Tooltip("Список точек спавна")]
-    private List<Transform> _listSpawnPoints;
+namespace GuardiansDefense.Wave
+{
+  public class WaveManager : SingletonInSceneNoInstance<WaveManager>
+  {
+    [SerializeField] private MultiWave[] _listMultiWaves;
 
     //--------------------------------------
 
-
-
-    //======================================
-
-    /// <summary>
-    /// Текущая волна
-    /// </summary>
-    public int CurrentWave { get; private set; }
+    private LevelManager levelManager;
 
     //======================================
 
-    private void Start()
+    public int CurrentWaveIndex { get; private set; } = -1;
+
+    //======================================
+
+    public event Action<int> OnWaveBegun;
+
+    public event Action<int> OnWaveCompleted;
+
+    public event Action OnWavesOver;
+
+    //======================================
+
+    protected override void Awake()
     {
-      _listWaves[0].SpawnEnemies();
+      base.Awake();
+
+      levelManager = LevelManager.Instance;
+
+      InitMultiWaves();
+    }
+
+    private void OnEnable()
+    {
+      foreach (var multiWave in _listMultiWaves)
+      {
+        multiWave.OnWaveOver += WaveOver;
+      }
+    }
+
+    private void OnDisable()
+    {
+      foreach (var multiWave in _listMultiWaves)
+      {
+        multiWave.OnWaveOver -= WaveOver;
+      }
     }
 
     //======================================
 
-    /// <summary>
-    /// Добавить волну
-    /// </summary>
-    public void AddWave()
+    private void InitMultiWaves()
     {
-      CurrentWave++;
+      _listMultiWaves = GetComponentsInChildren<MultiWave>(true);
+
+      for (int i = 0; i < _listMultiWaves.Length; i++)
+      {
+        _listMultiWaves[i].gameObject.SetActive(false);
+      }
+
+      _listMultiWaves[0].gameObject.SetActive(true);
+    }
+
+    private void WaveOver()
+    {
+      OnWaveCompleted?.Invoke(CurrentWaveIndex + 1);
+
+      NextWave();
+    }
+
+    private void NextWave()
+    {
+      _listMultiWaves[CurrentWaveIndex].gameObject.SetActive(false);
+
+      if (CurrentWaveIndex + 1 > _listMultiWaves.Length - 1)
+        OnWavesOver?.Invoke();
+    }
+
+    public void StartWave()
+    {
+      InitWave();
+    }
+
+    private void InitWave()
+    {
+      CurrentWaveIndex++;
+
+      Debug.Log($"РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІРѕР»РЅС‹: {CurrentWaveIndex + 1}");
+
+      MultiWave wave = _listMultiWaves[CurrentWaveIndex];
+
+      wave.gameObject.SetActive(true);
+
+      OnWaveBegun?.Invoke(CurrentWaveIndex + 1);
+    }
+
+    public int GetNumberAgentsWaves()
+    {
+      int numberAgents = 0;
+      for (int i = 0; i < _listMultiWaves.Length; i++)
+      {
+        numberAgents += _listMultiWaves[i].GetNumberAgents();
+      }
+
+      return numberAgents;
     }
 
     //======================================

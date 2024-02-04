@@ -1,52 +1,84 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GuardianDefence.Wave
-{
-  public class MultiWave : Wave
-  {
-    public override int GetEnemiesCount()
-    {
-      return 10;
-    }
+using GuardiansDefense.Enemy;
 
-    private List<SingleWave> listSingleWave = new List<SingleWave>();
+namespace GuardiansDefense.Wave
+{
+  public class MultiWave : MonoBehaviour
+  {
+    public List<EnemyAgent> agentsWave = new List<EnemyAgent>();
+
+    //--------------------------------------
+
+    private SingleWave[] singleWaves;
+    
+    private bool[] completedSingleWaves;
+
+    //======================================
+
+    public event Action OnWaveOver;
 
     //======================================
 
     private void Awake()
     {
-      AddSingleWave();
+      singleWaves = GetComponents<SingleWave>();
+
+      completedSingleWaves = new bool[singleWaves.Length];
     }
 
-    //======================================
-
-    private void AddSingleWave()
+    private void OnEnable()
     {
-      var singleWave = GetComponents<SingleWave>();
-      for (int i = 0; i < singleWave.Length; i++)
+      foreach (var singleWave in singleWaves)
       {
-        listSingleWave.Add(singleWave[i]);
+        singleWave.OnSingleWaveOver += WaveOver;
+      }
+    }
+
+    private void OnDisable()
+    {
+      foreach (var singleWave in singleWaves)
+      {
+        singleWave.OnSingleWaveOver -= WaveOver;
       }
     }
 
     //======================================
 
-    public override void SpawnEnemies()
+    private void WaveOver()
     {
-      for (int i = 0; i < listSingleWave.Count; i++)
+      for (int i = 0; i < completedSingleWaves.Length; i++)
       {
-        StartCoroutine(listSingleWave[i].SpawnEnemies());
+        if (completedSingleWaves[i])
+          continue;
+
+        completedSingleWaves[i] = true;
+        break;
       }
+
+      foreach (var completedSubWave in completedSingleWaves)
+      {
+        if (!completedSubWave)
+          return;
+      }
+
+      OnWaveOver?.Invoke();
+      enabled = false;
     }
 
-    public override void StopSpawnEnemies()
+    //======================================
+    
+    public int GetNumberAgents()
     {
-      /*for (int i = 0; i < listSingleWave.Count; i++)
+      int count = 0;
+      for (int i = 0; i < singleWaves.Length; i++)
       {
-        StopCoroutine(listSingleWave[i].SpawnEnemies());
-      }*/
+        count += singleWaves[i].GetNumberAgents();
+      }
+
+      return count;
     }
 
     //======================================
