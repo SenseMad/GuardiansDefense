@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 using GuardiansDefense.Level;
@@ -17,6 +18,12 @@ namespace GuardiansDefense.Towers
     //======================================
 
     public TowerLevel CurrentTowerLevel => currentTowerLevel;
+
+    //======================================
+
+    public event Action<TowerLevel> OnUpgrade;
+
+    public event Action OnSell;
 
     //======================================
 
@@ -57,6 +64,8 @@ namespace GuardiansDefense.Towers
       currentTowerLevel = _levels[currentLevel];
 
       currentTowerLevel.gameObject.SetActive(true);
+
+      OnUpgrade?.Invoke(currentTowerLevel);
     }
 
     public void Upgrade()
@@ -66,10 +75,17 @@ namespace GuardiansDefense.Towers
 
     public void Sell()
     {
+      OnSell?.Invoke();
+
       Destroy(gameObject);
     }
 
     //======================================
+
+    public bool IsNextUpgrade()
+    {
+      return currentLevel < _levels.Length - 1;
+    }
 
     public TowerLevel GetNextLevel()
     {

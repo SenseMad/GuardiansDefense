@@ -1,14 +1,18 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 using GuardiansDefense.Towers;
 using GuardiansDefense.InputManager;
+using GuardiansDefense.UI;
 
 namespace GuardiansDefense.BuildSystem
 {
-  public class PlacementSystem : MonoBehaviour
+  public class PlacementSystem : SingletonInSceneNoInstance<PlacementSystem>
   {
     [SerializeField] private Tower tower;
+
+    [SerializeField] private TowerUI _towerUI;
 
     //--------------------------------------
 
@@ -22,12 +26,16 @@ namespace GuardiansDefense.BuildSystem
 
     //======================================
 
-    public Tower TowerToBuild => towerToBuild;
+    public event Action<Tower> OnSelectedTower;
+
+    public event Action<TowerPlacement> OnSelectedTowerPlacement;
 
     //======================================
 
-    private void Awake()
+    protected override void Awake()
     {
+      base.Awake();
+
       inputHandler = InputHandler.Instance;
 
       SelectTower(tower);
@@ -41,44 +49,75 @@ namespace GuardiansDefense.BuildSystem
     private void OnEnable()
     {
       inputHandler.IA_Player.Player.LeftMouse.performed += OnTryCreateTower;
+
+      _towerUI.OnRemove += Deselect;
     }
 
     private void OnDisable()
     {
       inputHandler.IA_Player.Player.LeftMouse.performed -= OnTryCreateTower;
+
+      _towerUI.OnRemove -= Deselect;
     }
 
     //======================================
 
     private void OnTryCreateTower(InputAction.CallbackContext obj)
     {
-      Vector3 mousePosition = buildInputManager.GetSelectedMapPosition(out TowerPlacement parTowerPlacement);
+      Tower tower = buildInputManager.GetSelectedTower();
+
+      if (tower != null)
+      {
+        SelectedTowerPlacement(tower.TowerPlacement);
+        return;
+      }
+
+      Vector3 mousePositionTowerPlacement = buildInputManager.GetSelectedMapPositionTowerPlacement(out TowerPlacement parTowerPlacement);
 
       if (parTowerPlacement == null)
         return;
 
-      if (parTowerPlacement.CurrentTower != null)
+      /*if (parTowerPlacement.CurrentTower != null)
       {
         SelectedTowerPlacement(parTowerPlacement);
         return;
-      }
+      }*/
 
-      parTowerPlacement.CreateTower(towerToBuild, mousePosition);
+      parTowerPlacement.CreateTower(towerToBuild, mousePositionTowerPlacement);
     }
 
     public void SelectTower(Tower parTower)
     {
       towerToBuild = parTower;
 
-      selectedTowerPlacement = null;
+      Deselect();
+
+      OnSelectedTower?.Invoke(parTower);
     }
 
     public void SelectedTowerPlacement(TowerPlacement parTowerPlacement)
     {
-      if (towerToBuild != null)
+      /*if (towerToBuild != null)
+        return;*/
+
+      if (selectedTowerPlacement == parTowerPlacement)
+      {
+        Deselect();
         return;
+      }
 
       selectedTowerPlacement = parTowerPlacement;
+
+      _towerUI.Show(parTowerPlacement);
+
+      OnSelectedTowerPlacement?.Invoke(parTowerPlacement);
+    }
+
+    private void Deselect()
+    {
+      _towerUI.Hide();
+
+      selectedTowerPlacement = null;
     }
 
     //======================================

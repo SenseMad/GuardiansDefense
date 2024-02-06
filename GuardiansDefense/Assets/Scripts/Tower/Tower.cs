@@ -24,6 +24,8 @@ namespace GuardiansDefense.Towers
 
     public TowerUpgrade TowerUpgrade { get; private set; }
 
+    public TowerPlacement TowerPlacement { get; set; }
+
     //======================================
 
     private void Awake()

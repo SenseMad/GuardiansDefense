@@ -24,6 +24,7 @@ namespace GuardiansDefense.Towers
         return;
 
       _currentTower = Instantiate(parTower, parPosition, transform.rotation);
+      _currentTower.TowerPlacement = this;
     }
 
     //======================================

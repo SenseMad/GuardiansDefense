@@ -25,7 +25,7 @@ namespace GuardiansDefense.BuildSystem
 
     //======================================
 
-    public Vector3 GetSelectedMapPosition(out TowerPlacement parTowerPlacement)
+    public Vector3 GetSelectedMapPositionTowerPlacement(out TowerPlacement parTowerPlacement)
     {
       Vector3 mousePos = Input.mousePosition;
       mousePos.z = camera.nearClipPlane;
@@ -51,6 +51,49 @@ namespace GuardiansDefense.BuildSystem
       }
 
       return lastPosition;
+    }
+
+    /*public TowerPlacement GetSelectedTowerPlacement()
+    {
+      Vector3 mousePos = Input.mousePosition;
+      mousePos.z = camera.nearClipPlane;
+      Ray ray = camera.ScreenPointToRay(mousePos);
+
+      if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
+      {
+        Tower tower = hit.collider.GetComponentInParent<Tower>();
+        if (!tower)
+          return null;
+
+        Ray rayDown = new Ray(hit.point, -Vector3.up);
+        if (Physics.Raycast(rayDown, out RaycastHit hitDown, 1))
+        {
+          TowerPlacement towerPlacement = hitDown.collider.GetComponent<TowerPlacement>();
+
+          if (!towerPlacement)
+            return null;
+
+          return towerPlacement;
+        }
+      }
+
+      return null;
+    }*/
+
+    public Tower GetSelectedTower()
+    {
+      Vector3 mousePos = Input.mousePosition;
+      mousePos.z = camera.nearClipPlane;
+      Ray ray = camera.ScreenPointToRay(mousePos);
+
+      if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
+      {
+        Tower tower = hit.collider.GetComponentInParent<Tower>();
+
+        return tower;
+      }
+
+      return null;
     }
 
     //======================================

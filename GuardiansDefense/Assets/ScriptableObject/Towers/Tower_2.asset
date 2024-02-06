@@ -16,5 +16,5 @@ MonoBehaviour:
   _distance: 15
   _shotCount: 1
   _shotsPerMinutes: 120
-  _price: 150
+  _price: 500
   _percentSell: 50
