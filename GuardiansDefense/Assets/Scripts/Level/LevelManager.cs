@@ -1,11 +1,18 @@
 using System;
+using UnityEngine;
+using Zenject;
 
+using GuardiansDefense.Currencies;
 using GuardiansDefense.Wave;
 
 namespace GuardiansDefense.Level
 {
-  public class LevelManager : SingletonInSceneNoInstance<LevelManager>
+  public class LevelManager : MonoBehaviour
   {
+    [SerializeField] private int _startingCurrence = 100;
+
+    //--------------------------------------
+
     private int totalNumberAgents;
 
     //======================================
@@ -16,6 +23,8 @@ namespace GuardiansDefense.Level
 
     public LevelState LevelState { get; private set; }
 
+    public Ñurrency Ñurrency { get; private set; }
+
     //======================================
 
     public event Action OnLevelFailed;
@@ -24,15 +33,9 @@ namespace GuardiansDefense.Level
 
     //======================================
 
-    protected override void Awake()
+    private void Awake()
     {
-      base.Awake();
-
-      totalNumberAgents = 0;
-
-      WaveManager = WaveManager.Instance;
-
-      PlayerHomeBase = PlayerHomeBase.Instance;
+      Ñurrency = new Ñurrency(_startingCurrence);
     }
 
     private void Start()
@@ -57,6 +60,13 @@ namespace GuardiansDefense.Level
     }
 
     //======================================
+
+    [Inject]
+    private void Construct(WaveManager parWaveManager, PlayerHomeBase parPlayerHomeBase)
+    {
+      WaveManager = parWaveManager;
+      PlayerHomeBase = parPlayerHomeBase;
+    }
 
     public void BuildingCompleted()
     {

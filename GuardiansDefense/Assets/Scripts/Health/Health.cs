@@ -21,9 +21,11 @@ namespace GuardiansDefense.HealthManager
 
     public event Action OnInstantlyKill;
 
+    public event Action<int> OnChangeHealth;
+
     //======================================
 
-    private void Start()
+    private void Awake()
     {
       CurrentHealth = _maxHealth;
     }
@@ -44,6 +46,8 @@ namespace GuardiansDefense.HealthManager
       int healthAmount = CurrentHealth - healthBefore;
       if (healthAmount > 0)
         OnAddHealth?.Invoke(healthAmount);
+
+      OnChangeHealth?.Invoke(CurrentHealth);
     }
 
     public void TakeDamage(int parHealth)
@@ -60,6 +64,8 @@ namespace GuardiansDefense.HealthManager
       int damageAmount = healthBefore - CurrentHealth;
       if (damageAmount > 0)
         OnTakeHealth?.Invoke(damageAmount);
+
+      OnChangeHealth?.Invoke(CurrentHealth);
 
       if (CurrentHealth <= 0)
         OnInstantlyKill?.Invoke();

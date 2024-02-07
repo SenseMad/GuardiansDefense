@@ -1,17 +1,16 @@
 using UnityEngine;
+using Zenject;
 
 namespace GuardiansDefense.InputManager
 {
-  public class InputHandler : SingletonInGame<InputHandler>
+  public class InputHandler : MonoBehaviour
   {
     public IA_Player IA_Player { get; private set; }
 
     //======================================
 
-    protected override void Awake()
+    private void Awake()
     {
-      base.Awake();
-
       IA_Player = new IA_Player();
     }
 

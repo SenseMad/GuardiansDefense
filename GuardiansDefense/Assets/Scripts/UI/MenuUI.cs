@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace GuardiansDefense.UI
 {
@@ -10,14 +9,15 @@ namespace GuardiansDefense.UI
 
     //======================================
 
-    protected virtual void Awake()
-    {
-      panelController = PanelController.Instance;
-    }
+    protected virtual void Awake() { }
 
     //======================================
 
-
+    [Inject]
+    private void Construct(PanelController parPanelController)
+    {
+      panelController = parPanelController;
+    }
 
     //======================================
 

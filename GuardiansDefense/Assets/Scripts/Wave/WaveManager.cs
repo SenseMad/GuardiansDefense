@@ -5,13 +5,9 @@ using GuardiansDefense.Level;
 
 namespace GuardiansDefense.Wave
 {
-  public class WaveManager : SingletonInSceneNoInstance<WaveManager>
+  public class WaveManager : MonoBehaviour
   {
     [SerializeField] private MultiWave[] _listMultiWaves;
-
-    //--------------------------------------
-
-    private LevelManager levelManager;
 
     //======================================
 
@@ -27,12 +23,8 @@ namespace GuardiansDefense.Wave
 
     //======================================
 
-    protected override void Awake()
+    private void Awake()
     {
-      base.Awake();
-
-      levelManager = LevelManager.Instance;
-
       InitMultiWaves();
     }
 

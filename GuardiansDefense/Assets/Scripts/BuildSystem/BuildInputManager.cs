@@ -4,7 +4,7 @@ using GuardiansDefense.Towers;
 
 namespace GuardiansDefense.BuildSystem
 {
-  public class BuildInputManager : SingletonInSceneNoInstance<BuildInputManager>
+  public class BuildInputManager : MonoBehaviour
   {
     [SerializeField] private LayerMask _placementLayermask;
 
@@ -16,10 +16,8 @@ namespace GuardiansDefense.BuildSystem
 
     //======================================
 
-    protected override void Awake()
+    private void Awake()
     {
-      base.Awake();
-
       camera = Camera.main;
     }
 

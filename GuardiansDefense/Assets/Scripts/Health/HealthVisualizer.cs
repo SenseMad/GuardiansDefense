@@ -32,12 +32,12 @@ namespace GuardiansDefense.HealthManager
 
     private void OnEnable()
     {
-      health.OnTakeHealth += Health_OnTakeHealth;
+      health.OnChangeHealth += UpdateHealthBar;
     }
 
     private void OnDisable()
     {
-      health.OnTakeHealth -= Health_OnTakeHealth;
+      health.OnChangeHealth -= UpdateHealthBar;
     }
 
     private void LateUpdate()
@@ -47,7 +47,7 @@ namespace GuardiansDefense.HealthManager
 
     //======================================
 
-    private void Health_OnTakeHealth(int obj)
+    private void UpdateHealthBar(int parHealth)
     {
       UpdateHealtdBar();
     }

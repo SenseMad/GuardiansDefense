@@ -1,15 +1,13 @@
 using UnityEngine;
 
-public class Waypoints : SingletonInSceneNoInstance<Waypoints>
+public class Waypoints : MonoBehaviour
 {
   [SerializeField] private WaypointData[] _listWaypointsData;
 
   //======================================
 
-  protected override void Awake()
+  private void Awake()
   {
-    base.Awake();
-
     GetPaths();
   }
 

@@ -12,6 +12,10 @@ namespace GuardiansDefense.UI
     [SerializeField] private Panel _panel;
 
     [Space(10)]
+    [SerializeField] private TextMeshProUGUI _damageText;
+    [SerializeField] private TextMeshProUGUI _rangeText;
+
+    [Space(10)]
     [SerializeField] private Button _upgradeButton;
     [SerializeField] private Button _removeButton;
 
@@ -59,6 +63,8 @@ namespace GuardiansDefense.UI
 
     public void Hide()
     {
+      //Debug.Log($"{panelController}");
+
       panelController.Hide(_panel);
 
       selectedTower = null;
@@ -111,6 +117,10 @@ namespace GuardiansDefense.UI
 
     private void UpdateText(TowerLevel parTowerLevel)
     {
+      _damageText.text = $"Damage: {parTowerLevel.LevelData.Damage}";
+      _rangeText.text = $"Range: {parTowerLevel.LevelData.Distance}";
+      // Скорость стрельбы
+
       _upgradeTowerPriceText.text = $"{parTowerLevel.LevelData.Price}";
       _removeTowerPriceText.text = $"{selectedTower.TowerUpgrade.GetSellLevel()}";
     }

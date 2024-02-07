@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GuardiansDefense.UI
 {
-  public class PanelController : SingletonInSceneNoInstance<PanelController>
+  public class PanelController : MonoBehaviour
   {
     [SerializeField] private Panel _currentActivePanel;
 

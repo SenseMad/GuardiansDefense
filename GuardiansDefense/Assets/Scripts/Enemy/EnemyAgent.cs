@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 using GuardiansDefense.HealthManager;
 using GuardiansDefense.Level;
@@ -26,8 +27,6 @@ namespace GuardiansDefense.Enemy
     private void Awake()
     {
       health = GetComponent<Health>();
-
-      levelManager = LevelManager.Instance;
     }
 
     private void Start()
@@ -120,6 +119,11 @@ namespace GuardiansDefense.Enemy
     public void InitWaypoints(Vector3[] parWaypoints)
     {
       waypoints = parWaypoints;
+    }
+
+    public void InitLevelMagager(LevelManager parLevelManager)
+    {
+      levelManager = parLevelManager;
     }
 
     //======================================

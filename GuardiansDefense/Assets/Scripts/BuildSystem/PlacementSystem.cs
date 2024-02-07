@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 using GuardiansDefense.Towers;
 using GuardiansDefense.InputManager;
@@ -8,7 +9,7 @@ using GuardiansDefense.UI;
 
 namespace GuardiansDefense.BuildSystem
 {
-  public class PlacementSystem : SingletonInSceneNoInstance<PlacementSystem>
+  public class PlacementSystem : MonoBehaviour
   {
     [SerializeField] private Tower tower;
 
@@ -32,18 +33,9 @@ namespace GuardiansDefense.BuildSystem
 
     //======================================
 
-    protected override void Awake()
-    {
-      base.Awake();
-
-      inputHandler = InputHandler.Instance;
-
-      SelectTower(tower);
-    }
-
     private void Start()
     {
-      buildInputManager = BuildInputManager.Instance;
+      SelectTower(tower);
     }
 
     private void OnEnable()
@@ -61,6 +53,13 @@ namespace GuardiansDefense.BuildSystem
     }
 
     //======================================
+
+    [Inject]
+    private void Construct(InputHandler parInputHandler, BuildInputManager parBuildInputManager)
+    {
+      inputHandler = parInputHandler;
+      buildInputManager = parBuildInputManager;
+    }
 
     private void OnTryCreateTower(InputAction.CallbackContext obj)
     {

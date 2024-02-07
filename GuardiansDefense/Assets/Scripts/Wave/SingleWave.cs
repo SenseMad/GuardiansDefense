@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using GuardiansDefense.Enemy;
+using GuardiansDefense.Level;
+using Zenject;
 
 namespace GuardiansDefense.Wave
 {
@@ -22,6 +24,8 @@ namespace GuardiansDefense.Wave
 
     private Waypoints waypoints;
 
+    private LevelManager levelManager;
+
     //======================================
 
     public event Action OnSingleWaveBegun;
@@ -30,17 +34,19 @@ namespace GuardiansDefense.Wave
 
     //======================================
 
-    private void Start()
-    {
-      waypoints = Waypoints.Instance;
-    }
-
     private void Update()
     {
       TimerSpawnAgent();
     }
 
     //======================================
+
+    [Inject]
+    private void Construct(LevelManager parLevelManager, Waypoints parWaypoints)
+    {
+      levelManager = parLevelManager;
+      waypoints = parWaypoints;
+    }
 
     private void TimerSpawnAgent()
     {
@@ -87,6 +93,7 @@ namespace GuardiansDefense.Wave
 
       EnemyAgent agent = Instantiate(parWaveSetting.Agent, waypoints.GetPointPosition(wave.PathIndex, 0), Quaternion.LookRotation(direction));
       agent.InitWaypoints(waypoints.GetWaypoints(wave.PathIndex));
+      agent.InitLevelMagager(levelManager);
 
       agentsSpawned++;
 

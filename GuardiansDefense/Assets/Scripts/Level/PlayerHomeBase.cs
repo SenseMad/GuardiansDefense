@@ -1,17 +1,17 @@
+using UnityEngine;
+
 using GuardiansDefense.HealthManager;
 
 namespace GuardiansDefense.Level
 {
-  public class PlayerHomeBase : SingletonInSceneNoInstance<PlayerHomeBase>
+  public class PlayerHomeBase : MonoBehaviour
   {
-    public Health Health { get; private set; }
+    [field: SerializeField] public Health Health { get; private set; }
 
     //======================================
 
-    protected override void Awake()
+    private void Awake()
     {
-      base.Awake();
-
       Health = GetComponent<Health>();
     }
 
