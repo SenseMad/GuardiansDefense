@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 using GuardiansDefense.Enemy;
 using GuardiansDefense.Level;
-using Zenject;
 
 namespace GuardiansDefense.Wave
 {
@@ -28,8 +28,6 @@ namespace GuardiansDefense.Wave
 
     //======================================
 
-    public event Action OnSingleWaveBegun;
-
     public event Action OnSingleWaveOver;
 
     //======================================
@@ -47,6 +45,8 @@ namespace GuardiansDefense.Wave
       levelManager = parLevelManager;
       waypoints = parWaypoints;
     }
+
+    //======================================
 
     private void TimerSpawnAgent()
     {

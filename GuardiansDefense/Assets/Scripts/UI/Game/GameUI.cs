@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 using GuardiansDefense.Level;
@@ -14,6 +15,9 @@ namespace GuardiansDefense.UI
 
     [SerializeField] private TextMeshProUGUI _coinsText;
 
+    [Space(10)]
+    [SerializeField] private Button _startWaveButton;
+
     //--------------------------------------
 
     private LevelManager levelManager;
@@ -24,6 +28,8 @@ namespace GuardiansDefense.UI
     {
       UpdateHealthText();
 
+      UpdateNumberWaveText();
+
       UpdateCoinsText();
     }
 
@@ -31,14 +37,26 @@ namespace GuardiansDefense.UI
     {
       levelManager.PlayerHomeBase.Health.OnChangeHealth += UpdateHealthText;
 
+      levelManager.WaveManager.OnWaveBegun += UpdateNumberWaveText;
+
+      levelManager.WaveManager.OnWaveCompleted += StartWaveButton;
+
       levelManager.—urrency.OnChange—urrency += UpdateCoinsText;
+
+      _startWaveButton.onClick.AddListener(StartWave);
     }
 
     private void OnDisable()
     {
       levelManager.PlayerHomeBase.Health.OnChangeHealth -= UpdateHealthText;
 
+      levelManager.WaveManager.OnWaveBegun -= UpdateNumberWaveText;
+
+      levelManager.WaveManager.OnWaveCompleted -= StartWaveButton;
+
       levelManager.—urrency.OnChange—urrency -= UpdateCoinsText;
+
+      _startWaveButton.onClick.RemoveListener(StartWave);
     }
 
     //======================================
@@ -48,6 +66,8 @@ namespace GuardiansDefense.UI
     {
       levelManager = parLevelManager;
     }
+
+    //======================================
 
     private void UpdateHealthText()
     {
@@ -59,6 +79,20 @@ namespace GuardiansDefense.UI
       _healthText.text = $"{parHealth}";
     }
 
+    //--------------------------------------
+
+    private void UpdateNumberWaveText()
+    {
+      UpdateNumberWaveText(levelManager.WaveManager.CurrentWaveIndex + 1);
+    }
+
+    private void UpdateNumberWaveText(int parWave)
+    {
+      _numberWaveText.text = $"{parWave}/{levelManager.WaveManager.NumberWaves}";
+    }
+
+    //--------------------------------------
+
     private void UpdateCoinsText()
     {
       UpdateCoinsText(levelManager.—urrency.Current—urrency);
@@ -67,6 +101,20 @@ namespace GuardiansDefense.UI
     private void UpdateCoinsText(int parCurrence)
     {
       _coinsText.text = $"{parCurrence}";
+    }
+
+    //--------------------------------------
+
+    private void StartWave()
+    {
+      levelManager.StartWave();
+
+      _startWaveButton.gameObject.SetActive(false);
+    }
+
+    private void StartWaveButton(int parWave)
+    {
+      _startWaveButton.gameObject.SetActive(true);
     }
 
     //======================================

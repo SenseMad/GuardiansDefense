@@ -1,5 +1,4 @@
 using UnityEngine;
-using Zenject;
 
 using GuardiansDefense.HealthManager;
 using GuardiansDefense.Level;

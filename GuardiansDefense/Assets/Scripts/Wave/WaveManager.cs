@@ -1,8 +1,6 @@
 using System;
 using UnityEngine;
 
-using GuardiansDefense.Level;
-
 namespace GuardiansDefense.Wave
 {
   public class WaveManager : MonoBehaviour
@@ -12,6 +10,8 @@ namespace GuardiansDefense.Wave
     //======================================
 
     public int CurrentWaveIndex { get; private set; } = -1;
+
+    public int NumberWaves { get; private set; }
 
     //======================================
 
@@ -32,7 +32,7 @@ namespace GuardiansDefense.Wave
     {
       foreach (var multiWave in _listMultiWaves)
       {
-        multiWave.OnWaveOver += WaveOver;
+        multiWave.OnWaveOver += NextWave;
       }
     }
 
@@ -40,7 +40,7 @@ namespace GuardiansDefense.Wave
     {
       foreach (var multiWave in _listMultiWaves)
       {
-        multiWave.OnWaveOver -= WaveOver;
+        multiWave.OnWaveOver -= NextWave;
       }
     }
 
@@ -50,39 +50,28 @@ namespace GuardiansDefense.Wave
     {
       _listMultiWaves = GetComponentsInChildren<MultiWave>(true);
 
-      for (int i = 0; i < _listMultiWaves.Length; i++)
+      foreach (var wave in _listMultiWaves)
       {
-        _listMultiWaves[i].gameObject.SetActive(false);
+        wave.gameObject.SetActive(false);
       }
 
-      _listMultiWaves[0].gameObject.SetActive(true);
-    }
-
-    private void WaveOver()
-    {
-      OnWaveCompleted?.Invoke(CurrentWaveIndex + 1);
-
-      NextWave();
+      NumberWaves = _listMultiWaves.Length;
     }
 
     private void NextWave()
     {
-      _listMultiWaves[CurrentWaveIndex].gameObject.SetActive(false);
-
-      if (CurrentWaveIndex + 1 > _listMultiWaves.Length - 1)
-        OnWavesOver?.Invoke();
+      if (CurrentWaveIndex < _listMultiWaves.Length - 1)
+      {
+        OnWaveCompleted?.Invoke(CurrentWaveIndex + 1);
+        return;
+      }
+      
+      OnWavesOver?.Invoke();
     }
 
     public void StartWave()
     {
-      InitWave();
-    }
-
-    private void InitWave()
-    {
       CurrentWaveIndex++;
-
-      Debug.Log($"Инициализация волны: {CurrentWaveIndex + 1}");
 
       MultiWave wave = _listMultiWaves[CurrentWaveIndex];
 
@@ -96,7 +85,7 @@ namespace GuardiansDefense.Wave
       int numberAgents = 0;
       for (int i = 0; i < _listMultiWaves.Length; i++)
       {
-        numberAgents += _listMultiWaves[i].GetNumberAgents();
+        numberAgents += _listMultiWaves[i].NumberAgents;
       }
 
       return numberAgents;

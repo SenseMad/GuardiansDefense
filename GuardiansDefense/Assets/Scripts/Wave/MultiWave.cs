@@ -11,10 +11,14 @@ namespace GuardiansDefense.Wave
     public List<EnemyAgent> agentsWave = new List<EnemyAgent>();
 
     //--------------------------------------
-
-    private SingleWave[] singleWaves;
     
     private bool[] completedSingleWaves;
+
+    //======================================
+
+    public SingleWave[] SingleWaves { get; private set; }
+
+    public int NumberAgents { get; private set; }
 
     //======================================
 
@@ -24,14 +28,14 @@ namespace GuardiansDefense.Wave
 
     private void Awake()
     {
-      singleWaves = GetComponents<SingleWave>();
+      SingleWaves = GetComponents<SingleWave>();
 
-      completedSingleWaves = new bool[singleWaves.Length];
+      completedSingleWaves = new bool[SingleWaves.Length];
     }
 
     private void OnEnable()
     {
-      foreach (var singleWave in singleWaves)
+      foreach (var singleWave in SingleWaves)
       {
         singleWave.OnSingleWaveOver += WaveOver;
       }
@@ -39,10 +43,12 @@ namespace GuardiansDefense.Wave
 
     private void OnDisable()
     {
-      foreach (var singleWave in singleWaves)
+      foreach (var singleWave in SingleWaves)
       {
         singleWave.OnSingleWaveOver -= WaveOver;
       }
+
+      NumberAgents = GetNumberAgents();
     }
 
     //======================================
@@ -65,7 +71,7 @@ namespace GuardiansDefense.Wave
       }
 
       OnWaveOver?.Invoke();
-      enabled = false;
+      gameObject.SetActive(false);
     }
 
     //======================================
@@ -73,9 +79,9 @@ namespace GuardiansDefense.Wave
     public int GetNumberAgents()
     {
       int count = 0;
-      for (int i = 0; i < singleWaves.Length; i++)
+      for (int i = 0; i < SingleWaves.Length; i++)
       {
-        count += singleWaves[i].GetNumberAgents();
+        count += SingleWaves[i].GetNumberAgents();
       }
 
       return count;

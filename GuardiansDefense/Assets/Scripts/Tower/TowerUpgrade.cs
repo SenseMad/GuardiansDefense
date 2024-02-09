@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
-using Zenject;
 
 using GuardiansDefense.Level;
+using Zenject;
+using GuardiansDefense.Currencies;
 using GuardiansDefense.Wave;
 
 namespace GuardiansDefense.Towers
@@ -37,12 +38,6 @@ namespace GuardiansDefense.Towers
     }
 
     //======================================
-
-    /*[Inject]
-    private void Construct(LevelManager parLevelManager)
-    {
-      levelManager = parLevelManager;
-    }*/
 
     private void CreateTowerLevels()
     {
@@ -99,8 +94,8 @@ namespace GuardiansDefense.Towers
 
     public TowerLevel GetNextLevel()
     {
-      if (currentLevel + 1 >= _levels.Length)
-        return null;
+      if (!IsNextUpgrade())
+        return currentTowerLevel;
 
       return _levels[currentLevel + 1];
     }
@@ -112,9 +107,7 @@ namespace GuardiansDefense.Towers
 
     public int GetSellLevel(int parLevel)
     {
-      //Debug.Log($"{levelManager}");
-
-      /*if (levelManager.LevelState == LevelState.Building)
+      if (levelManager.LevelState == LevelState.Building)
       {
         int cost = 0;
         for (int i = 0; i <= parLevel; i++)
@@ -123,9 +116,16 @@ namespace GuardiansDefense.Towers
         }
 
         return cost;
-      }*/
+      }
 
       return _levels[parLevel].LevelData.GetSellPrice();
+    }
+
+    //======================================
+
+    public void SetLevelManager(LevelManager parLevelManager)
+    {
+      levelManager = parLevelManager;
     }
 
     //======================================

@@ -22,7 +22,7 @@ namespace GuardiansDefense.Towers
 
     //======================================
 
-    public TowerUpgrade TowerUpgrade { get; private set; }
+    [field: SerializeField] public TowerUpgrade TowerUpgrade { get; private set; }
 
     public TowerPlacement TowerPlacement { get; set; }
 

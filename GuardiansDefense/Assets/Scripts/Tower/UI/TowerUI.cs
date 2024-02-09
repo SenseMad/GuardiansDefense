@@ -2,8 +2,10 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Zenject;
 
 using GuardiansDefense.Towers;
+using GuardiansDefense.Level;
 
 namespace GuardiansDefense.UI
 {
@@ -27,6 +29,8 @@ namespace GuardiansDefense.UI
 
     private Tower selectedTower;
 
+    private LevelManager levelManager;
+
     //======================================
 
     public event Action OnRemove;
@@ -49,6 +53,14 @@ namespace GuardiansDefense.UI
 
     //======================================
 
+    [Inject]
+    private void Construct(LevelManager parLevelManager)
+    {
+      levelManager = parLevelManager;
+    }
+
+    //======================================
+
     public void Show(TowerPlacement parTowerPlacement)
     {
       if (!_panel.IsShow)
@@ -63,8 +75,6 @@ namespace GuardiansDefense.UI
 
     public void Hide()
     {
-      //Debug.Log($"{panelController}");
-
       panelController.Hide(_panel);
 
       selectedTower = null;
@@ -77,7 +87,14 @@ namespace GuardiansDefense.UI
       if (!selectedTower)
         return;
 
-      selectedTower.TowerUpgrade.Upgrade();
+      TowerUpgrade towerUpgrade = selectedTower.TowerUpgrade;
+
+      if (!levelManager.Ñurrency.CanAfford(towerUpgrade.GetNextLevel().LevelData.Price))
+        return;
+
+      towerUpgrade.Upgrade();
+
+      levelManager.Ñurrency.TakeÑurrency(towerUpgrade.GetNextLevel().LevelData.Price);
 
       UpdateText();
 
@@ -88,6 +105,8 @@ namespace GuardiansDefense.UI
     {
       if (!selectedTower)
         return;
+
+      levelManager.Ñurrency.AddÑurrency(selectedTower.TowerUpgrade.GetSellLevel());
 
       selectedTower.TowerUpgrade.Sell();
 
@@ -121,7 +140,9 @@ namespace GuardiansDefense.UI
       _rangeText.text = $"Range: {parTowerLevel.LevelData.Distance}";
       // Ñêîðîñòü ñòðåëüáû
 
-      _upgradeTowerPriceText.text = $"{parTowerLevel.LevelData.Price}";
+      TowerLevel towerLevel = selectedTower.TowerUpgrade.GetNextLevel();
+
+      _upgradeTowerPriceText.text = $"{towerLevel.LevelData.Price}";
       _removeTowerPriceText.text = $"{selectedTower.TowerUpgrade.GetSellLevel()}";
     }
 

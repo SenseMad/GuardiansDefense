@@ -6,6 +6,7 @@ using Zenject;
 using GuardiansDefense.Towers;
 using GuardiansDefense.InputManager;
 using GuardiansDefense.UI;
+using GuardiansDefense.Level;
 
 namespace GuardiansDefense.BuildSystem
 {
@@ -25,6 +26,8 @@ namespace GuardiansDefense.BuildSystem
 
     private TowerPlacement selectedTowerPlacement;
 
+    private LevelManager levelManager;
+
     //======================================
 
     public event Action<Tower> OnSelectedTower;
@@ -43,6 +46,8 @@ namespace GuardiansDefense.BuildSystem
       inputHandler.IA_Player.Player.LeftMouse.performed += OnTryCreateTower;
 
       _towerUI.OnRemove += Deselect;
+
+      levelManager.WaveManager.OnWaveBegun += Deselect;
     }
 
     private void OnDisable()
@@ -50,15 +55,18 @@ namespace GuardiansDefense.BuildSystem
       inputHandler.IA_Player.Player.LeftMouse.performed -= OnTryCreateTower;
 
       _towerUI.OnRemove -= Deselect;
+
+      levelManager.WaveManager.OnWaveBegun -= Deselect;
     }
 
     //======================================
 
     [Inject]
-    private void Construct(InputHandler parInputHandler, BuildInputManager parBuildInputManager)
+    private void Construct(InputHandler parInputHandler, BuildInputManager parBuildInputManager, LevelManager parLevelManager)
     {
       inputHandler = parInputHandler;
       buildInputManager = parBuildInputManager;
+      levelManager = parLevelManager;
     }
 
     private void OnTryCreateTower(InputAction.CallbackContext obj)
@@ -83,6 +91,8 @@ namespace GuardiansDefense.BuildSystem
       }*/
 
       parTowerPlacement.CreateTower(towerToBuild, mousePositionTowerPlacement);
+
+      Deselect();
     }
 
     public void SelectTower(Tower parTower)
@@ -117,6 +127,11 @@ namespace GuardiansDefense.BuildSystem
       _towerUI.Hide();
 
       selectedTowerPlacement = null;
+    }
+
+    private void Deselect(int parWave)
+    {
+      Deselect();
     }
 
     //======================================

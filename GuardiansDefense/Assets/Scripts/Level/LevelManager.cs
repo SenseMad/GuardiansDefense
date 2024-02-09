@@ -21,7 +21,7 @@ namespace GuardiansDefense.Level
 
     public PlayerHomeBase PlayerHomeBase { get; private set; }
 
-    public LevelState LevelState { get; private set; }
+    public LevelState LevelState { get; private set; } = LevelState.Building;
 
     public Ñurrency Ñurrency { get; private set; }
 
@@ -33,16 +33,9 @@ namespace GuardiansDefense.Level
 
     //======================================
 
-    private void Awake()
-    {
-      Ñurrency = new Ñurrency(_startingCurrence);
-    }
-
     private void Start()
     {
       totalNumberAgents = WaveManager.GetNumberAgentsWaves();
-
-      BuildingCompleted();
     }
 
     private void OnEnable()
@@ -66,10 +59,12 @@ namespace GuardiansDefense.Level
     {
       WaveManager = parWaveManager;
       PlayerHomeBase = parPlayerHomeBase;
+      Ñurrency = new Ñurrency(_startingCurrence);
     }
 
-    public void BuildingCompleted()
+    public void StartWave()
     {
+      LevelState = LevelState.Building;
       ChangeLevelState(LevelState.SpawningEnemies);
     }
 

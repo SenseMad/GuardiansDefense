@@ -4,6 +4,7 @@ using GuardiansDefense.Level;
 using GuardiansDefense.Wave;
 using GuardiansDefense.BuildSystem;
 using GuardiansDefense.UI;
+using GuardiansDefense.Currencies;
 
 public class GameplaySceneInstaller : MonoInstaller
 {

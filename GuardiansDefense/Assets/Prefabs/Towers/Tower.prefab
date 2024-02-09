@@ -793,6 +793,7 @@ MonoBehaviour:
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+  <TowerUpgrade>k__BackingField: {fileID: 7426203882029934134}
 --- !u!114 &7426203882029934134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -805,5 +806,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6b50b86908597a4e9c19782d371e96e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _levels: []
-  currentTowerLevel: {fileID: 0}
+  _levels:
+  - {fileID: 7505179595066495094}
+  - {fileID: 816009142014287249}
+  currentTowerLevel: {fileID: 7505179595066495094}
