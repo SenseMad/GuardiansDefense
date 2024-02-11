@@ -7,14 +7,17 @@ using GuardiansDefense.Towers;
 using GuardiansDefense.InputManager;
 using GuardiansDefense.UI;
 using GuardiansDefense.Level;
+using GuardiansDefense.UI.SelectTower;
 
 namespace GuardiansDefense.BuildSystem
 {
   public class PlacementSystem : MonoBehaviour
   {
-    [SerializeField] private Tower tower;
+    [SerializeField] private TowerGhost _towerGhost;
 
     [SerializeField] private TowerUI _towerUI;
+
+    [SerializeField] private SelectTowerUI _selectTowerUI;
 
     //--------------------------------------
 
@@ -30,33 +33,53 @@ namespace GuardiansDefense.BuildSystem
 
     //======================================
 
-    public event Action<Tower> OnSelectedTower;
-
     public event Action<TowerPlacement> OnSelectedTowerPlacement;
 
     //======================================
 
     private void Start()
     {
-      SelectTower(tower);
+      DeselectUI();
     }
 
     private void OnEnable()
     {
       inputHandler.IA_Player.Player.LeftMouse.performed += OnTryCreateTower;
 
-      _towerUI.OnRemove += Deselect;
+      inputHandler.IA_Player.Player.RightMouse.performed += RightMouse_performed;
 
-      levelManager.WaveManager.OnWaveBegun += Deselect;
+      _towerUI.OnRemove += DeselectUI;
+
+      levelManager.WaveManager.OnWaveBegun += DeselectUI;
+
+      _selectTowerUI.OnButtonSelected += SelectTower;
+      _selectTowerUI.OnButtonUnSelected += UnSelectTower;
     }
 
     private void OnDisable()
     {
       inputHandler.IA_Player.Player.LeftMouse.performed -= OnTryCreateTower;
 
-      _towerUI.OnRemove -= Deselect;
+      inputHandler.IA_Player.Player.RightMouse.performed -= RightMouse_performed;
 
-      levelManager.WaveManager.OnWaveBegun -= Deselect;
+      _towerUI.OnRemove -= DeselectUI;
+
+      levelManager.WaveManager.OnWaveBegun -= DeselectUI;
+
+      _selectTowerUI.OnButtonSelected -= SelectTower;
+      _selectTowerUI.OnButtonUnSelected -= UnSelectTower;
+    }
+
+    private void Update()
+    {
+      if (_towerGhost == null)
+        return;
+
+      Vector3 mousePositionTowerPlacement = buildInputManager.GetPositionInstallTower(out TowerPlacement parTowerPlacement);
+
+      //_towerGhost.gameObject.SetActive(buildInputManager.YouCanInstallTower());
+
+      _towerGhost.transform.position = mousePositionTowerPlacement;
     }
 
     //======================================
@@ -69,49 +92,77 @@ namespace GuardiansDefense.BuildSystem
       levelManager = parLevelManager;
     }
 
+    //======================================
+
+    private void RightMouse_performed(InputAction.CallbackContext obj)
+    {
+      if (towerToBuild != null)
+      {
+        UnSelectTower();
+
+        _selectTowerUI.ButtonUnSelected();
+      }
+
+      if (selectedTowerPlacement != null)
+      {
+        DeselectUI();
+      }
+    }
+
     private void OnTryCreateTower(InputAction.CallbackContext obj)
     {
       Tower tower = buildInputManager.GetSelectedTower();
 
       if (tower != null)
       {
-        SelectedTowerPlacement(tower.TowerPlacement);
+        SelectedTowerPlacementUI(tower.TowerPlacement);
         return;
       }
+      
+      if (towerToBuild == null)
+        return;
 
-      Vector3 mousePositionTowerPlacement = buildInputManager.GetSelectedMapPositionTowerPlacement(out TowerPlacement parTowerPlacement);
+      Vector3 mousePositionTowerPlacement = buildInputManager.GetPositionInstallTower(out TowerPlacement parTowerPlacement);
 
       if (parTowerPlacement == null)
         return;
 
-      /*if (parTowerPlacement.CurrentTower != null)
-      {
-        SelectedTowerPlacement(parTowerPlacement);
-        return;
-      }*/
-
       parTowerPlacement.CreateTower(towerToBuild, mousePositionTowerPlacement);
 
-      Deselect();
+      DeselectUI();
+
+      UnSelectTower();
+
+      _selectTowerUI.ButtonUnSelected();
     }
 
-    public void SelectTower(Tower parTower)
+    private void SelectTower(Tower parTower)
     {
+      UnSelectTower();
+
       towerToBuild = parTower;
 
-      Deselect();
+      _towerGhost = Instantiate(parTower.TowerGhost, Vector3.zero, Quaternion.identity);
 
-      OnSelectedTower?.Invoke(parTower);
+      DeselectUI();
     }
 
-    public void SelectedTowerPlacement(TowerPlacement parTowerPlacement)
+    private void UnSelectTower()
     {
-      /*if (towerToBuild != null)
-        return;*/
+      towerToBuild = null;
+
+      if (_towerGhost != null)
+        Destroy(_towerGhost.gameObject);
+    }
+
+    private void SelectedTowerPlacementUI(TowerPlacement parTowerPlacement)
+    {
+      if (towerToBuild != null)
+        return;
 
       if (selectedTowerPlacement == parTowerPlacement)
       {
-        Deselect();
+        DeselectUI();
         return;
       }
 
@@ -122,16 +173,16 @@ namespace GuardiansDefense.BuildSystem
       OnSelectedTowerPlacement?.Invoke(parTowerPlacement);
     }
 
-    private void Deselect()
+    private void DeselectUI()
     {
       _towerUI.Hide();
 
       selectedTowerPlacement = null;
     }
 
-    private void Deselect(int parWave)
+    private void DeselectUI(int parWave)
     {
-      Deselect();
+      DeselectUI();
     }
 
     //======================================

@@ -35,6 +35,15 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RightMouse"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a930440-a689-4667-a0cc-480b9b5dd4b5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -46,6 +55,17 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard + Mouse"",
                     ""action"": ""LeftMouse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0837c87d-81e2-45d1-89f9-e53cc7d9c754"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard + Mouse"",
+                    ""action"": ""RightMouse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -85,6 +105,7 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_LeftMouse = m_Player.FindAction("LeftMouse", throwIfNotFound: true);
+        m_Player_RightMouse = m_Player.FindAction("RightMouse", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -147,11 +168,13 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_LeftMouse;
+    private readonly InputAction m_Player_RightMouse;
     public struct PlayerActions
     {
         private @IA_Player m_Wrapper;
         public PlayerActions(@IA_Player wrapper) { m_Wrapper = wrapper; }
         public InputAction @LeftMouse => m_Wrapper.m_Player_LeftMouse;
+        public InputAction @RightMouse => m_Wrapper.m_Player_RightMouse;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -164,6 +187,9 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
             @LeftMouse.started += instance.OnLeftMouse;
             @LeftMouse.performed += instance.OnLeftMouse;
             @LeftMouse.canceled += instance.OnLeftMouse;
+            @RightMouse.started += instance.OnRightMouse;
+            @RightMouse.performed += instance.OnRightMouse;
+            @RightMouse.canceled += instance.OnRightMouse;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -171,6 +197,9 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
             @LeftMouse.started -= instance.OnLeftMouse;
             @LeftMouse.performed -= instance.OnLeftMouse;
             @LeftMouse.canceled -= instance.OnLeftMouse;
+            @RightMouse.started -= instance.OnRightMouse;
+            @RightMouse.performed -= instance.OnRightMouse;
+            @RightMouse.canceled -= instance.OnRightMouse;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -209,5 +238,6 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnLeftMouse(InputAction.CallbackContext context);
+        void OnRightMouse(InputAction.CallbackContext context);
     }
 }

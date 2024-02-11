@@ -16,11 +16,13 @@ namespace GuardiansDefense.UI.SelectTower
 
     //--------------------------------------
 
-    private Tower tower;
-
     private Image buttonImage;
 
     private Color standartButtonColor;
+
+    //======================================
+
+    public Tower Tower { get; private set; }
 
     //======================================
 
@@ -66,7 +68,7 @@ namespace GuardiansDefense.UI.SelectTower
     {
       standartButtonColor = buttonImage.color;
 
-      tower = parTower;
+      Tower = parTower;
     }
 
     //======================================

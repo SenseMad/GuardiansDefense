@@ -23,75 +23,73 @@ namespace GuardiansDefense.BuildSystem
 
     //======================================
 
-    public Vector3 GetSelectedMapPositionTowerPlacement(out TowerPlacement parTowerPlacement)
+    public Vector3 GetPositionInstallTower(out TowerPlacement parTowerPlacement)
     {
-      Vector3 mousePos = Input.mousePosition;
-      mousePos.z = camera.nearClipPlane;
-      Ray ray = camera.ScreenPointToRay(mousePos);
+      Ray ray = camera.ScreenPointToRay(GetMousePosition());
       parTowerPlacement = null;
 
-      if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, _placementLayermask))
+      RaycastHit[] hits = Physics.RaycastAll(ray, float.MaxValue, _placementLayermask);
+
+      if (hits.Length > 0)
       {
-        TowerPlacement towerPlacement = hit.collider.GetComponentInParent<TowerPlacement>();
-        parTowerPlacement = towerPlacement;
+        foreach (var hitTowerPlacement in hits)
+        {
+          TowerPlacement towerPlacement = hitTowerPlacement.collider.GetComponentInParent<TowerPlacement>();
 
-        if (!towerPlacement)
+          if (!towerPlacement)
+            continue;
+
+          var breakingBlock = GetBreakingBlock(towerPlacement.transform.position);
+          if (breakingBlock != null)
+            return hitTowerPlacement.point;
+
+          parTowerPlacement = towerPlacement;
+
+          float heightAboveBlock = 1.0f;
+          Vector3 indicatorPosition = hitTowerPlacement.collider.bounds.center + Vector3.up * heightAboveBlock;
+
+          lastPosition = indicatorPosition;
           return lastPosition;
-
-        Ray rayUp = new Ray(hit.point, Vector3.up);
-        if (Physics.Raycast(rayUp, out RaycastHit hitUp, 1))
-          return lastPosition;
-
-        float heightAboveBlock = 1.0f;
-        Vector3 indicatorPosition = hit.collider.bounds.center + Vector3.up * heightAboveBlock;
-
-        lastPosition = indicatorPosition;
+        }
       }
 
       return lastPosition;
     }
 
-    /*public TowerPlacement GetSelectedTowerPlacement()
+    public bool YouCanInstallTower()
     {
-      Vector3 mousePos = Input.mousePosition;
-      mousePos.z = camera.nearClipPlane;
-      Ray ray = camera.ScreenPointToRay(mousePos);
+      GetPositionInstallTower(out TowerPlacement towerPlacement);
 
-      if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
-      {
-        Tower tower = hit.collider.GetComponentInParent<Tower>();
-        if (!tower)
-          return null;
-
-        Ray rayDown = new Ray(hit.point, -Vector3.up);
-        if (Physics.Raycast(rayDown, out RaycastHit hitDown, 1))
-        {
-          TowerPlacement towerPlacement = hitDown.collider.GetComponent<TowerPlacement>();
-
-          if (!towerPlacement)
-            return null;
-
-          return towerPlacement;
-        }
-      }
-
-      return null;
-    }*/
+      return towerPlacement != null;
+    }
 
     public Tower GetSelectedTower()
     {
-      Vector3 mousePos = Input.mousePosition;
-      mousePos.z = camera.nearClipPlane;
-      Ray ray = camera.ScreenPointToRay(mousePos);
+      Ray ray = camera.ScreenPointToRay(GetMousePosition());
 
       if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
-      {
-        Tower tower = hit.collider.GetComponentInParent<Tower>();
-
-        return tower;
-      }
+        return hit.collider.GetComponentInParent<Tower>();
 
       return null;
+    }
+
+    //======================================
+
+    private BreakingBlock GetBreakingBlock(Vector3 parPositionParentBlock)
+    {
+      Ray ray = new(parPositionParentBlock, Vector3.up);
+      if (Physics.Raycast(ray, out RaycastHit hit, 1))
+        return hit.collider.GetComponent<BreakingBlock>();
+
+      return null;
+    }
+
+    private Vector3 GetMousePosition()
+    {
+      Vector3 mousePos = Input.mousePosition;
+      mousePos.z = camera.nearClipPlane;
+
+      return mousePos;
     }
 
     //======================================

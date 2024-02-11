@@ -21,7 +21,9 @@ namespace GuardiansDefense.UI.SelectTower
 
     //======================================
 
-    public event Action OnButtonSelected;
+    public event Action<Tower> OnButtonSelected;
+
+    public event Action OnButtonUnSelected;
 
     //======================================
 
@@ -30,8 +32,15 @@ namespace GuardiansDefense.UI.SelectTower
       Initialize();
     }
 
+    private void OnEnable()
+    {
+      OnButtonUnSelected += SelectTowerUI_OnButtonUnSelected;
+    }
+
     private void OnDisable()
     {
+      OnButtonUnSelected -= SelectTowerUI_OnButtonUnSelected;
+
       foreach (var button in selectTowerButtons)
       {
         button.OnButtonSelected -= SelectTowerButton_OnButtonSelected;
@@ -39,6 +48,12 @@ namespace GuardiansDefense.UI.SelectTower
     }
 
     //======================================
+
+    private void SelectTowerUI_OnButtonUnSelected()
+    {
+      currentSelectedTowerButton?.UnSelection();
+      currentSelectedTowerButton = null;
+    }
 
     private void SelectTowerButton_OnButtonSelected(SelectTowerButton parSelectTowerButton)
     {
@@ -48,6 +63,8 @@ namespace GuardiansDefense.UI.SelectTower
         {
           currentSelectedTowerButton.UnSelection();
           currentSelectedTowerButton = null;
+
+          ButtonUnSelected();
           return;
         }
 
@@ -57,6 +74,8 @@ namespace GuardiansDefense.UI.SelectTower
       currentSelectedTowerButton = parSelectTowerButton;
 
       currentSelectedTowerButton.Selection();
+
+      OnButtonSelected?.Invoke(currentSelectedTowerButton.Tower);
     }
 
     private void Initialize()
@@ -75,7 +94,10 @@ namespace GuardiansDefense.UI.SelectTower
 
     //======================================
 
-
+    public void ButtonUnSelected()
+    {
+      OnButtonUnSelected?.Invoke();
+    }
 
     //======================================
   }

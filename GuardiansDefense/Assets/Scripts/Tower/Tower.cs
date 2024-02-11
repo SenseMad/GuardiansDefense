@@ -12,6 +12,9 @@ namespace GuardiansDefense.Towers
 
     [SerializeField] private LayerMask _enemyLayer;
 
+    [Space(10)]
+    [SerializeField] private TowerGhost _towerGhost;
+
     //--------------------------------------
 
     private EnemyAgent currentTarget;
@@ -25,6 +28,8 @@ namespace GuardiansDefense.Towers
     [field: SerializeField] public TowerUpgrade TowerUpgrade { get; private set; }
 
     public TowerPlacement TowerPlacement { get; set; }
+
+    public TowerGhost TowerGhost => _towerGhost;
 
     //======================================
 

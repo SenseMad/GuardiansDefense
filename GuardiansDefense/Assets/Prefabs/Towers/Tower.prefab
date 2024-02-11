@@ -793,6 +793,7 @@ MonoBehaviour:
   _enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+  _towerGhost: {fileID: 1016886398580525681, guid: 8b7ba0fbfe4e2804a82769dee6b0dca3, type: 3}
   <TowerUpgrade>k__BackingField: {fileID: 7426203882029934134}
 --- !u!114 &7426203882029934134
 MonoBehaviour:
