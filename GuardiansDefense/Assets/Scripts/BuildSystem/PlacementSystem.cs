@@ -77,7 +77,7 @@ namespace GuardiansDefense.BuildSystem
 
       Vector3 mousePositionTowerPlacement = buildInputManager.GetPositionInstallTower(out TowerPlacement parTowerPlacement);
 
-      //_towerGhost.gameObject.SetActive(buildInputManager.YouCanInstallTower());
+      _towerGhost.gameObject.SetActive(buildInputManager.YouCanInstallTower());
 
       _towerGhost.transform.position = mousePositionTowerPlacement;
     }

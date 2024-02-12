@@ -9,9 +9,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1711317984118831890, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
+      propertyPath: m_CastShadows
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1711317984118831890, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
       propertyPath: m_ReceiveShadows
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1711317984118831890, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 32a76832b79e84347ad9df08b12709c3, type: 2}
     - target: {fileID: 1946373838095913151, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -56,6 +64,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4887594489903731058, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 32a76832b79e84347ad9df08b12709c3, type: 2}
     - target: {fileID: 6167415938295241658, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
@@ -68,6 +80,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tower_Ghost
       objectReference: {fileID: 0}
+    - target: {fileID: 8286905657482965191, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 32a76832b79e84347ad9df08b12709c3, type: 2}
     m_RemovedComponents:
     - {fileID: 937982251007733214, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
     - {fileID: 7505179595066495094, guid: 1fafb76689821664fb5d3b7fd4d9cae5, type: 3}
