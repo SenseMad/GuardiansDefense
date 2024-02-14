@@ -26,8 +26,8 @@ namespace GuardiansDefense.Towers
     }
 
     //======================================
-
-    public void CreateTower(Tower parTower, Vector3 parPosition)
+    
+    public void CreateTower(Tower parTower)
     {
       if (_currentTower != null)
         return;
@@ -39,7 +39,8 @@ namespace GuardiansDefense.Towers
 
       levelManager.—urrency.Take—urrency(towerUpgrade.CurrentTowerLevel.LevelData.Price);
 
-      _currentTower = Instantiate(parTower, parPosition, transform.rotation);
+      //_currentTower = Instantiate(parTower, parPosition, transform.rotation);
+      _currentTower = Instantiate(parTower, transform.position + Vector3.up * (parTower.transform.localScale.y / 2f + transform.localScale.y / 2f), transform.rotation);
       _currentTower.TowerPlacement = this;
       _currentTower.TowerUpgrade.SetLevelManager(levelManager);
     }

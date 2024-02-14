@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using GuardiansDefense.Towers;
+using Unity.VisualScripting;
 
 namespace GuardiansDefense.BuildSystem
 {
@@ -23,7 +24,7 @@ namespace GuardiansDefense.BuildSystem
 
     //======================================
 
-    public Vector3 GetPositionInstallTower(out TowerPlacement parTowerPlacement)
+    /*public Vector3 GetPositionInstallTower(out TowerPlacement parTowerPlacement)
     {
       Ray ray = camera.ScreenPointToRay(GetMousePosition());
       parTowerPlacement = null;
@@ -54,13 +55,43 @@ namespace GuardiansDefense.BuildSystem
       }
 
       return lastPosition;
+    }*/
+
+    public TowerPlacement GetPositionInstallTower()
+    {
+      Ray ray = camera.ScreenPointToRay(GetMousePosition());
+
+      RaycastHit[] hits = new RaycastHit[10];
+      int numberHits = Physics.RaycastNonAlloc(ray, hits, float.MaxValue, _placementLayermask);
+
+      if (numberHits > 0)
+      {
+        foreach (var hitTowerPlacement in hits)
+        {
+          TowerPlacement towerPlacement = hitTowerPlacement.collider.GetComponentInParent<TowerPlacement>();
+
+          if (towerPlacement == null)
+            return null;
+
+          if (towerPlacement.CurrentTower != null)
+            return null;
+
+          var breakingBlock = GetBreakingBlock(towerPlacement.transform.position);
+          if (breakingBlock != null)
+            return null;
+
+          return towerPlacement;
+        }
+      }
+
+      return null;
     }
 
     public bool YouCanInstallTower()
     {
-      GetPositionInstallTower(out TowerPlacement towerPlacement);
+      TowerPlacement towerPlacement = GetPositionInstallTower();
 
-      return towerPlacement != null;
+      return towerPlacement != null && towerPlacement.CurrentTower == null;
     }
 
     public Tower GetSelectedTower()
