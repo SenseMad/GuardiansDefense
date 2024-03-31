@@ -10,7 +10,7 @@ namespace GuardiansDefense.Towers
     [Space(10)]
     [SerializeField, Min(0)] private float _turnSpeed;
 
-    [SerializeField] private LayerMask _enemyLayer;
+    [SerializeField] private LayerMask _isShootingLayer;
 
     [Space(10)]
     [SerializeField] private TowerGhost _towerGhost;
@@ -61,7 +61,7 @@ namespace GuardiansDefense.Towers
 
     private EnemyAgent DetectTarget()
     {
-      int hitCount = Physics.OverlapSphereNonAlloc(transform.position, TowerUpgrade.CurrentTowerLevel.LevelData.Distance, targets, _enemyLayer);
+      int hitCount = Physics.OverlapSphereNonAlloc(transform.position, TowerUpgrade.CurrentTowerLevel.LevelData.Distance, targets, _isShootingLayer);
 
       if (hitCount > 0)
       {

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tower_1
   m_EditorClassIdentifier: 
   _damage: 25
-  _distance: 6
+  _distance: 5
   _shotCount: 1
   _shotsPerMinutes: 120
   _price: 150

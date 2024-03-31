@@ -74,6 +74,8 @@ namespace GuardiansDefense.BuildSystem
 
     private void Update()
     {
+
+
       SelectCreateTowerGhost();
     }
 

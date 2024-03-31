@@ -790,7 +790,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _turnSpeed: 25
-  _enemyLayer:
+  _isShootingLayer:
     serializedVersion: 2
     m_Bits: 64
   _towerGhost: {fileID: 1016886398580525681, guid: 8b7ba0fbfe4e2804a82769dee6b0dca3, type: 3}
